@@ -1,11 +1,9 @@
 $('#creatormenu').fadeOut(0);
 
-
 window.addEventListener('message', function(event) {
     if (event.data.action == "show") {
         $("#creatormenu").fadeIn(500);
        
-
         if (event.data.shopData) {
             for (const [index, table] of Object.entries(event.data.shopData)) {
                 var horseCategory = table.name
@@ -30,11 +28,7 @@ window.addEventListener('message', function(event) {
                         var HorseName = horseData[0];
                         var priceGold = horseData[1];
                         var priceDolar = horseData[2];
-                        var BuyModel = null;
-
-                        // priceGold = '';
-                        // priceDolar = '';
-                     
+                        var BuyModel = null;                   
 
                         $(`#page_shop .scroll-container .collapsible #${index} .collapsible-body`).append(`
 
@@ -58,26 +52,18 @@ window.addEventListener('message', function(event) {
 
                         $(`#page_shop .scroll-container .collapsible #${index} .collapsible-body #${_}`).hover(function() {                       
                             $( this ).click(function() {                        
-                             
-
                                 $(Modelhorse).addClass("selected");
                                 $('.selected').removeClass("selected"); 
-
                                 Modelhorse = $(this).attr('id');                       
                                 $(this).addClass('selected');
-
                                 $.post('https://rsg-stable/loadHorse', JSON.stringify({ horseModel: $(this).attr('id') }));
                             });                       
-                            
                         }, function() {});
-
-
                     }
                 }
 
             }
-
-            
+			
             $('#page_myhorses .scroll-container .collapsible').html('');
             $('#page_myhorses .scroll-container .collapsible').append(`
                 <li>
@@ -90,19 +76,16 @@ window.addEventListener('message', function(event) {
             `);
             $('.collapsible').collapsible();
         }
-
         if (event.data.action == "hide") {
             $("#creatormenu").fadeOut(500);
         }
     }
 
-    
     if (event.data.EnableCustom == "true") {
         $('#button-customization').removeClass("disabled");
     } else {
         $('#button-customization').addClass("disabled");
     }
-    
 
     if (event.data.myHorsesData) {
 
@@ -135,8 +118,7 @@ window.addEventListener('message', function(event) {
             `);
             
             $(`#page_myhorses .scroll-container .collapsible #${HorseID}`).hover(function() {  
-                $( this ).click(function() {                    
-                    console.log('clicou') 
+                $( this ).click(function() {
                     let HorseSEID
                     $(HorseID).addClass("selected");
                     $('.selected').removeClass("selected"); 
@@ -154,7 +136,6 @@ window.addEventListener('message', function(event) {
 
 function confirm(){
     $.post('https://rsg-stable/CloseStable')
-
     $('#button-customization').addClass("disabled");
     $('#page_myhorses .scroll-container .collapsible').html('');
     $('#page_shop .scroll-container .collapsible').html('');
@@ -178,7 +159,6 @@ $(".button-right").on('click', function() {
     var component = $(inputElement).attr('id');
 
     var value = Number($(inputElement).attr('value'));
-    // value = Number(String.split(value, '/')[0]);
     var nValue = value + 1;
 
     var min = $(inputElement).attr('min');
@@ -192,7 +172,7 @@ $(".button-right").on('click', function() {
 
     var titleElement = $(this).parent().parent().find('.grey-text');
     var text = titleElement.text();
-  //  var component = text.split(' ')[0];
+
     titleElement.text(component + ' ' + nValue + '/' + max);
     $.post('https://rsg-stable/'+component, JSON.stringify({ id: nValue }));
 });
@@ -202,8 +182,6 @@ $(".button-left").on('click', function() {
     var component = $(inputElement).attr('id');
 
     var value = Number($(inputElement).attr('value'));
-    // value = Number(String.split(value, '/')[0]);
-
     var nValue = value - 1;
 
     var min = $(inputElement).attr('min');
@@ -217,7 +195,7 @@ $(".button-left").on('click', function() {
 
     var titleElement = $(this).parent().parent().find('.grey-text');
     var text = titleElement.text();
-  //  var component = text.split(' ')[0];
+	
     titleElement.text(component + ' ' + nValue + '/' + max);
     $.post('https://rsg-stable/'+component, JSON.stringify({ id: nValue }));
 });
@@ -260,18 +238,14 @@ function buyHorse(Modelhor, price, isGold) {
     }    
 }
 
-
 function SelectHorse(IdHorse) {    
     $.post('https://rsg-stable/selectHorse', JSON.stringify({ horseID: IdHorse }))    
 }
 
-
 function SellHorse(IdHorse) {    
     $.post('https://rsg-stable/sellHorse', JSON.stringify({ horseID: IdHorse }))
-
     $('#button-customization').addClass("disabled");
     $('#page_myhorses .scroll-container .collapsible').html('');
     $('#page_shop .scroll-container .collapsible').html('');
     $("#creatormenu").fadeOut(500);
-
 }
