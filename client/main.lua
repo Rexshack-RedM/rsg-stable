@@ -917,20 +917,25 @@ end)
 
 RegisterNetEvent('rsg-stable:client:equipHorseLantern')
 AddEventHandler('rsg-stable:client:equipHorseLantern', function()
-	local pcoords = GetEntityCoords(PlayerPedId())
-	local hcoords = GetEntityCoords(SpawnplayerHorse)
-	if #(pcoords - hcoords) <= 3.0 then
-		if lanternequiped == 0 then
-			Citizen.InvokeNative(0xD3A7B003ED343FD9, SpawnplayerHorse, 0x635E387C, true, true, true)
-			lanternequiped = 1
-			QRCore.Functions.Notify('horse lantern equiped', 'success')
-		elseif lanternequiped == 1 then
-			Citizen.InvokeNative(0xD710A5007C2AC539, SpawnplayerHorse, 0x1530BE1C, 0)
-			Citizen.InvokeNative(0xCC8CA3E88256E58F, SpawnplayerHorse, 0, 1, 1, 1, 0)
-			lanternequiped = 0
-			QRCore.Functions.Notify('horse lantern removed', 'primary')
+	local hasItem = QRCore.Functions.HasItem('horselantern', 1)
+	if hasItem then
+		local pcoords = GetEntityCoords(PlayerPedId())
+		local hcoords = GetEntityCoords(SpawnplayerHorse)
+		if #(pcoords - hcoords) <= 3.0 then
+			if lanternequiped == 0 then
+				Citizen.InvokeNative(0xD3A7B003ED343FD9, SpawnplayerHorse, 0x635E387C, true, true, true)
+				lanternequiped = 1
+				QRCore.Functions.Notify('horse lantern equiped', 'success')
+			elseif lanternequiped == 1 then
+				Citizen.InvokeNative(0xD710A5007C2AC539, SpawnplayerHorse, 0x1530BE1C, 0)
+				Citizen.InvokeNative(0xCC8CA3E88256E58F, SpawnplayerHorse, 0, 1, 1, 1, 0)
+				lanternequiped = 0
+				QRCore.Functions.Notify('horse lantern removed', 'primary')
+			end
+		else
+			QRCore.Functions.Notify('you need to be closer to do that!', 'error')
 		end
 	else
-		QRCore.Functions.Notify('you need to be closer to do that!', 'error')
+		QRCore.Functions.Notify('you don\'t have a horse lantern!', 'error')
 	end
 end)
