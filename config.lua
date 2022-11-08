@@ -1,7 +1,12 @@
 Config = {}
 
+-- settings
 Config.HorseInvWeight = 240000
 Config.HorseInvSlots = 12
+Config.FeedCarrotHealth = 10 -- amount of health increase when you feed your horse a carrot
+Config.FeedCarrotStamina = 10 -- amount of stamina increase when you feed your horse a carrot
+Config.FeedSugarCubeHealth = 25 -- amount of health increase when you feed your horse a sugarcube
+Config.FeedSugarCubeStamina = 25 -- amount of stamina increase when you feed your horse a sugarcube
 
 Config.Stables = {
 	Valentine = {

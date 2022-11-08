@@ -162,18 +162,19 @@ RegisterNetEvent("rsg-stable:SellHorseWithId", function(id)
 	end)
 end)
 
--- feed horse
+-- feed horse carrot
 QRCore.Functions.CreateUseableItem("carrot", function(source, item)
     local Player = QRCore.Functions.GetPlayer(source)
 	if Player.Functions.RemoveItem(item.name, 1, item.slot) then
-        TriggerClientEvent("rsg-stable:client:feedhorse", source, item.name, 25)
+        TriggerClientEvent("rsg-stable:client:feedhorse", source, item.name)
     end
 end)
 
-QRCore.Functions.CreateUseableItem("sugar", function(source, item)
+-- feed horse sugarcube
+QRCore.Functions.CreateUseableItem("sugarcube", function(source, item)
     local Player = QRCore.Functions.GetPlayer(source)
 	if Player.Functions.RemoveItem(item.name, 1, item.slot) then
-        TriggerClientEvent("rsg-stable:client:feedhorse", source, item.name, 50)
+        TriggerClientEvent("rsg-stable:client:feedhorse", source, item.name)
     end
 end)
 

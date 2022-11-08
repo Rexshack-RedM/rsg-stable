@@ -331,6 +331,9 @@ local function WhistleHorse()
                 SpawnplayerHorse = 0
             else
                 TaskGoToEntity(SpawnplayerHorse, PlayerPedId(), -1, 7.2, 2.0, 0, 0)
+				ClearPedEnvDirt(SpawnplayerHorse)
+				ClearPedDamageDecalByZone(SpawnplayerHorse, 10, "ALL")
+				ClearPedBloodDamage(SpawnplayerHorse)
             end
         end
     else
@@ -871,16 +874,30 @@ end)
 
 -- feed horse
 RegisterNetEvent('rsg-stable:client:feedhorse')
-AddEventHandler('rsg-stable:client:feedhorse', function(itemName, increase)
-    Citizen.InvokeNative(0xCD181A959CFDD7F4, PlayerPedId(), SpawnplayerHorse, -224471938, 0, 0) -- TaskAnimalInteraction
-    Wait(5000)
-    PlaySoundFrontend("Core_Fill_Up", "Consumption_Sounds", true, 0)
-    local Health = GetAttributeCoreValue(SpawnplayerHorse, 0)
-    local newHealth = Health + increase
-    local Stamina = GetAttributeCoreValue(SpawnplayerHorse, 0)
-    local newStamina = Stamina + increase
-    Citizen.InvokeNative(0xC6258F41D86676E0, SpawnplayerHorse, 0, newHealth) --core
-    Citizen.InvokeNative(0xC6258F41D86676E0, SpawnplayerHorse, 1, newStamina) --core
+AddEventHandler('rsg-stable:client:feedhorse', function(itemName)
+	if itemName == 'carrot' then
+		Citizen.InvokeNative(0xCD181A959CFDD7F4, PlayerPedId(), SpawnplayerHorse, -224471938, 0, 0) -- TaskAnimalInteraction
+		Wait(5000)
+		local horseHealth = Citizen.InvokeNative(0x36731AC041289BB1, SpawnplayerHorse, 0) -- GetAttributeCoreValue (Health)
+		local newHealth = horseHealth + Config.FeedCarrotHealth
+		local horseStamina = Citizen.InvokeNative(0x36731AC041289BB1, SpawnplayerHorse, 1) -- GetAttributeCoreValue (Stamina)
+		local newStamina = horseStamina + Config.FeedCarrotStamina
+		Citizen.InvokeNative(0xC6258F41D86676E0, SpawnplayerHorse, 0, newHealth) -- SetAttributeCoreValue (Health)
+		Citizen.InvokeNative(0xC6258F41D86676E0, SpawnplayerHorse, 1, newStamina) -- SetAttributeCoreValue (Stamina)
+		PlaySoundFrontend("Core_Fill_Up", "Consumption_Sounds", true, 0)
+	elseif itemName == 'sugarcube' then
+		Citizen.InvokeNative(0xCD181A959CFDD7F4, PlayerPedId(), SpawnplayerHorse, -224471938, 0, 0) -- TaskAnimalInteraction
+		Wait(5000)
+		local horseHealth = Citizen.InvokeNative(0x36731AC041289BB1, SpawnplayerHorse, 0) -- GetAttributeCoreValue (Health)
+		local newHealth = horseHealth + Config.FeedSugarCubeHealth
+		local horseStamina = Citizen.InvokeNative(0x36731AC041289BB1, SpawnplayerHorse, 1) -- GetAttributeCoreValue (Stamina)
+		local newStamina = horseStamina + Config.FeedSugarCubeStamina
+		Citizen.InvokeNative(0xC6258F41D86676E0, SpawnplayerHorse, 0, newHealth) -- SetAttributeCoreValue (Health)
+		Citizen.InvokeNative(0xC6258F41D86676E0, SpawnplayerHorse, 1, newStamina) -- SetAttributeCoreValue (Stamina)
+		PlaySoundFrontend("Core_Fill_Up", "Consumption_Sounds", true, 0)
+	else
+		print("something went wrong")
+	end
 end)
 
 -- brush horse
@@ -893,5 +910,7 @@ AddEventHandler('rsg-stable:client:brushhorse', function(itemName)
 	ClearPedDamageDecalByZone(SpawnplayerHorse, 10, "ALL")
 	ClearPedBloodDamage(SpawnplayerHorse)
 	Citizen.InvokeNative(0xD8544F6260F5F01E, SpawnplayerHorse, 10)
-	QRCore.Functions.Notify('nice and clean', 'success')
+	local horseHealth = Citizen.InvokeNative(0x36731AC041289BB1, SpawnplayerHorse, 0)
+	Citizen.InvokeNative(0xC6258F41D86676E0, SpawnplayerHorse, 0, horseHealth + 5)
+	PlaySoundFrontend("Core_Fill_Up", "Consumption_Sounds", true, 0)
 end)
