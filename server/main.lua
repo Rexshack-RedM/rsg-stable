@@ -183,3 +183,9 @@ QRCore.Functions.CreateUseableItem("horsebrush", function(source, item)
     local Player = QRCore.Functions.GetPlayer(source)
 	TriggerClientEvent("rsg-stable:client:brushhorse", source, item.name)
 end)
+
+-- horselantern
+QRCore.Functions.CreateUseableItem("horselantern", function(source, item)
+    local Player = QRCore.Functions.GetPlayer(source)
+	TriggerClientEvent("rsg-stable:client:equipHorseLantern", source, item.name)
+end)
