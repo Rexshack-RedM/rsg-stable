@@ -18,7 +18,7 @@ RegisterNetEvent("rsg-stable:UpdateHorseComponents", function(components, idhors
 	local Player = QRCore.Functions.GetPlayer(src)
 	local Playercid = Player.PlayerData.citizenid
 	local id = idhorse
-	MySQL.Async.execute("UPDATE horses SET `components`=@components WHERE `citizenid`=@citizenid AND `id`=@id", {components = encodedComponents, citizenid = Playercid, id = id}, function(done)
+	MySQL.Async.execute("UPDATE player_horses SET `components`=@components WHERE `citizenid`=@citizenid AND `id`=@id", {components = encodedComponents, citizenid = Playercid, id = id}, function(done)
 		TriggerClientEvent("rsg-stable:client:UpdadeHorseComponents", src, MyHorse_entity, components)
 	end)
 end)
@@ -28,7 +28,7 @@ RegisterNetEvent("rsg-stable:CheckSelectedHorse", function()
 	local Player = QRCore.Functions.GetPlayer(src)
 	local Playercid = Player.PlayerData.citizenid
 
-	MySQL.Async.fetchAll('SELECT * FROM horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
+	MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
 		if #horses ~= 0 then
 			for i = 1, #horses do
 				if horses[i].selected == 1 then
@@ -45,14 +45,14 @@ RegisterNetEvent("rsg-stable:AskForMyHorses", function()
 	local components = nil
 	local Player = QRCore.Functions.GetPlayer(src)
 	local Playercid = Player.PlayerData.citizenid
-	MySQL.Async.fetchAll('SELECT * FROM horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
+	MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
 		if horses[1]then
 			horseId = horses[1].id
 		else
 			horseId = nil
 		end
 
-		MySQL.Async.fetchAll('SELECT * FROM horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(components)
+		MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(components)
 			if components[1] then
 				components = components[1].components
 			end
@@ -66,7 +66,7 @@ RegisterNetEvent("rsg-stable:BuyHorse", function(data, name)
 	local Player = QRCore.Functions.GetPlayer(src)
 	local Playercid = Player.PlayerData.citizenid
 
-	MySQL.Async.fetchAll('SELECT * FROM horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
+	MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
 		if #horses >= 3 then
 			TriggerClientEvent('qr-core:client:DrawText', src, 'you can have a maximum of 3 horses!', 'left')
 			Wait(5000) -- display text for 5 seconds
@@ -101,7 +101,7 @@ RegisterNetEvent("rsg-stable:BuyHorse", function(data, name)
 				return
 			end
 		end
-	MySQL.Async.execute('INSERT INTO horses (`citizenid`, `name`, `model`) VALUES (@Playercid, @name, @model);',
+	MySQL.Async.execute('INSERT INTO player_horses (`citizenid`, `name`, `model`) VALUES (@Playercid, @name, @model);',
 		{
 			Playercid = Playercid,
 			name = tostring(name),
@@ -116,16 +116,16 @@ RegisterNetEvent("rsg-stable:SelectHorseWithId", function(id)
 	local src = source
 	local Player = QRCore.Functions.GetPlayer(src)
 	local Playercid = Player.PlayerData.citizenid
-	MySQL.Async.fetchAll('SELECT * FROM horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horse)
+	MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horse)
 		for i = 1, #horse do
 			local horseID = horse[i].id
-			MySQL.Async.execute("UPDATE horses SET `selected`='0' WHERE `citizenid`=@citizenid AND `id`=@id", {citizenid = Playercid,  id = horseID}, function(done)
+			MySQL.Async.execute("UPDATE player_horses SET `selected`='0' WHERE `citizenid`=@citizenid AND `id`=@id", {citizenid = Playercid,  id = horseID}, function(done)
 			end)
 
 			Wait(300)
 
 			if horse[i].id == id then
-				MySQL.Async.execute("UPDATE horses SET `selected`='1' WHERE `citizenid`=@citizenid AND `id`=@id", {citizenid = Playercid, id = id}, function(done)
+				MySQL.Async.execute("UPDATE player_horses SET `selected`='1' WHERE `citizenid`=@citizenid AND `id`=@id", {citizenid = Playercid, id = id}, function(done)
 					TriggerClientEvent("rsg-stable:SetHorseInfo", src, horse[i].model, horse[i].name, horse[i].components)
 				end)
 			end
@@ -138,12 +138,12 @@ RegisterNetEvent("rsg-stable:SellHorseWithId", function(id)
 	local src = source
 	local Player = QRCore.Functions.GetPlayer(src)
 	local Playercid = Player.PlayerData.citizenid
-	MySQL.Async.fetchAll('SELECT * FROM horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
+	MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
 
 		for i = 1, #horses do
 		   if tonumber(horses[i].id) == tonumber(id) then
 				modelHorse = horses[i].model
-				MySQL.Async.fetchAll('DELETE FROM horses WHERE `citizenid`=@citizenid AND`id`=@id;', {citizenid = Playercid,  id = id}, function(result)
+				MySQL.Async.fetchAll('DELETE FROM player_horses WHERE `citizenid`=@citizenid AND`id`=@id;', {citizenid = Playercid,  id = id}, function(result)
 				end)
 			end
 		end

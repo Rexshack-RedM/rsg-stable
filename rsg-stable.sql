@@ -1,4 +1,4 @@
-CREATE TABLE `horses` (
+CREATE TABLE `player_horses` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `citizenid` varchar(50) NOT NULL,
   `selected` int(11) NOT NULL DEFAULT 0,
