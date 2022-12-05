@@ -298,11 +298,9 @@ local function InitiateHorse(atCoords)
     TaskAnimalUnalerted(entity, -1, false, 0, 0)
     Citizen.InvokeNative(0x283978A15512B2FE, entity, true)
     SpawnplayerHorse = entity
-    --Citizen.InvokeNative(0x283978A15512B2FE, entity, true)
-	Citizen.InvokeNative(0xE6D4E435B56D5BD0, PlayerId(), SpawnplayerHorse)
+	--Citizen.InvokeNative(0xE6D4E435B56D5BD0, PlayerId(), SpawnplayerHorse)
     SetPedNameDebug(entity, horseName)
     SetPedPromptName(entity, horseName)
-    --CreatePrompts(PromptGetGroupIdForTargetEntity(entity))
     if horseComponents ~= nil and horseComponents ~= "0" then
         for _, componentHash in pairs(json.decode(horseComponents)) do
             NativeSetPedComponentEnabled(entity, tonumber(componentHash))
@@ -915,6 +913,7 @@ AddEventHandler('rsg-stable:client:brushhorse', function(itemName)
 	PlaySoundFrontend("Core_Fill_Up", "Consumption_Sounds", true, 0)
 end)
 
+-- horse lantern
 RegisterNetEvent('rsg-stable:client:equipHorseLantern')
 AddEventHandler('rsg-stable:client:equipHorseLantern', function()
 	local hasItem = QRCore.Functions.HasItem('horselantern', 1)
