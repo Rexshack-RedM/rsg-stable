@@ -162,6 +162,24 @@ RegisterNetEvent("rsg-stable:SellHorseWithId", function(id)
     end)
 end)
 
+-- call active horse command
+QRCore.Commands.Add("callhorse", "call your active horse", {}, false, function(source)
+    src = source
+    TriggerClientEvent('rsg-stable:client:callHorse', src)
+end)
+
+-- flee active horse command
+QRCore.Commands.Add("fleehorse", "flee your active horse", {}, false, function(source)
+    src = source
+    TriggerClientEvent('rsg-stable:client:fleeHorse', src)
+end)
+
+-- open active horse inventory command
+QRCore.Commands.Add("horseinv", "open your active horse inventory", {}, false, function(source)
+    src = source
+    TriggerClientEvent('rsg-stable:client:inventoryHorse', src)
+end)
+
 -- feed horse carrot
 QRCore.Functions.CreateUseableItem("carrot", function(source, item)
     local Player = QRCore.Functions.GetPlayer(source)
