@@ -796,28 +796,6 @@ CreateThread(function()
 end)
 
 CreateThread(function()
-    while true do
-        Wait(1)
-        if Citizen.InvokeNative(0x91AEF906BCA88877, 0, QRCore.Shared.Keybinds['H']) then -- call horse
-            WhistleHorse()
-            Wait(10000) -- flood protection
-        end
-
-        if Citizen.InvokeNative(0x91AEF906BCA88877, 0, QRCore.Shared.Keybinds['HorseCommandFlee']) then -- flee horse
-            if SpawnplayerHorse ~= 0 then
-                fleeHorse(SpawnplayerHorse)
-            end
-        end
-        
-        if Citizen.InvokeNative(0x91AEF906BCA88877, 0, QRCore.Shared.Keybinds['B']) then -- horse inventory
-            if SpawnplayerHorse ~= 0 then
-                InvHorse(SpawnplayerHorse)
-            end
-        end
-    end
-end)
-
-CreateThread(function()
     while adding do
         Wait(0)
         for i, v in ipairs(HorseComp) do
@@ -845,8 +823,46 @@ CreateThread(function()
     end
 end)
 
+-------------------------------------------------------------------------
+
+-- call horse
+RegisterNetEvent('rsg-stable:client:callHorse', function()
+    if SpawnplayerHorse ~= 0 then
+        if GetScriptTaskStatus(SpawnplayerHorse, 0x4924437D, 0) ~= 0 then
+            local pcoords = GetEntityCoords(PlayerPedId())
+            local hcoords = GetEntityCoords(SpawnplayerHorse)
+            local caldist = #(pcoords - hcoords)
+            if caldist >= 100 then
+                DeleteEntity(SpawnplayerHorse)
+                Wait(1000)
+                SpawnplayerHorse = 0
+            else
+                TaskGoToEntity(SpawnplayerHorse, PlayerPedId(), -1, 7.2, 2.0, 0, 0)
+                ClearPedEnvDirt(SpawnplayerHorse)
+                ClearPedDamageDecalByZone(SpawnplayerHorse, 10, "ALL")
+                ClearPedBloodDamage(SpawnplayerHorse)
+            end
+        end
+    else
+        TriggerServerEvent('rsg-stable:CheckSelectedHorse')
+        Wait(100)
+        InitiateHorse()
+    end
+end)
+
+-- flee horse
+RegisterNetEvent('rsg-stable:client:fleeHorse', function()
+    TaskAnimalFlee(SpawnplayerHorse, PlayerPedId(), -1)
+    Wait(5000)
+    DeleteEntity(SpawnplayerHorse)
+    Wait(1000)
+    SpawnplayerHorse = 0
+end)
+
+-------------------------------------------------------------------------
+
 -- trigger horse inventory
-function InvHorse()
+RegisterNetEvent('rsg-stable:client:inventoryHorse', function()
     if SpawnplayerHorse ~= 0 then
         local pcoords = GetEntityCoords(PlayerPedId())
         local hcoords = GetEntityCoords(SpawnplayerHorse)
@@ -858,7 +874,7 @@ function InvHorse()
     else
         QRCore.Functions.Notify('you do not have a horse active!', 'error')
     end
-end
+end)
 
 -- horse inventory
 RegisterNetEvent('rsg-stable:client:horseinventory', function()
@@ -866,6 +882,8 @@ RegisterNetEvent('rsg-stable:client:horseinventory', function()
     TriggerServerEvent("inventory:server:OpenInventory", "stash", horsestash, { maxweight = Config.HorseInvWeight, slots = Config.HorseInvSlots, })
     TriggerEvent("inventory:client:SetCurrentStash", horsestash)
 end)
+
+-------------------------------------------------------------------------
 
 -- feed horse
 RegisterNetEvent('rsg-stable:client:feedhorse')
