@@ -1,4 +1,4 @@
-local QRCore = exports['qr-core']:GetCoreObject()
+local RSGCore = exports['rsg-core']:GetCoreObject()
 local SelectedHorseId = {}
 local Horses
 
@@ -15,7 +15,7 @@ end)
 RegisterNetEvent("rsg-stable:UpdateHorseComponents", function(components, idhorse, MyHorse_entity)
     local src = source
     local encodedComponents = json.encode(components)
-    local Player = QRCore.Functions.GetPlayer(src)
+    local Player = RSGCore.Functions.GetPlayer(src)
     local Playercid = Player.PlayerData.citizenid
     local id = idhorse
     MySQL.Async.execute("UPDATE player_horses SET `components`=@components WHERE `citizenid`=@citizenid AND `id`=@id", {components = encodedComponents, citizenid = Playercid, id = id}, function(done)
@@ -25,7 +25,7 @@ end)
 
 RegisterNetEvent("rsg-stable:CheckSelectedHorse", function()
     local src = source
-    local Player = QRCore.Functions.GetPlayer(src)
+    local Player = RSGCore.Functions.GetPlayer(src)
     local Playercid = Player.PlayerData.citizenid
 
     MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
@@ -43,7 +43,7 @@ RegisterNetEvent("rsg-stable:AskForMyHorses", function()
     local src = source
     local horseId = nil
     local components = nil
-    local Player = QRCore.Functions.GetPlayer(src)
+    local Player = RSGCore.Functions.GetPlayer(src)
     local Playercid = Player.PlayerData.citizenid
     MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
         if horses[1]then
@@ -63,14 +63,14 @@ end)
 
 RegisterNetEvent("rsg-stable:BuyHorse", function(data, name)
     local src = source
-    local Player = QRCore.Functions.GetPlayer(src)
+    local Player = RSGCore.Functions.GetPlayer(src)
     local Playercid = Player.PlayerData.citizenid
 
     MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
         if #horses >= 3 then
-            TriggerClientEvent('qr-core:client:DrawText', src, 'you can have a maximum of 3 horses!', 'left')
+            TriggerClientEvent('rsg-core:client:DrawText', src, 'you can have a maximum of 3 horses!', 'left')
             Wait(5000) -- display text for 5 seconds
-            TriggerClientEvent('qr-core:client:HideText', src)
+            TriggerClientEvent('rsg-core:client:HideText', src)
             return
         end
         Wait(200)
@@ -78,26 +78,26 @@ RegisterNetEvent("rsg-stable:BuyHorse", function(data, name)
             local currentBank = Player.Functions.GetMoney('bank')
             if data.Gold <= currentBank then
                 local bank = Player.Functions.RemoveMoney("bank", data.Gold, "stable-bought-horse")
-                TriggerClientEvent('qr-core:client:DrawText', src, 'horse purchased for $'..data.Gold, 'left')
+                TriggerClientEvent('rsg-core:client:DrawText', src, 'horse purchased for $'..data.Gold, 'left')
                 Wait(5000) -- display text for 5 seconds
-                TriggerClientEvent('qr-core:client:HideText', src)
+                TriggerClientEvent('rsg-core:client:HideText', src)
                 TriggerEvent('qbr-log:server:CreateLog', 'shops', 'Stable', 'green', "**"..GetPlayerName(Player.PlayerData.source) .. " (citizenid: "..Player.PlayerData.citizenid.." | id: "..Player.PlayerData.source..")** bought a horse for $"..data.Gold..".")
             else
-                TriggerClientEvent('qr-core:client:DrawText', src, 'not enough money!', 'left')
+                TriggerClientEvent('rsg-core:client:DrawText', src, 'not enough money!', 'left')
                 Wait(5000) -- display text for 5 seconds
-                TriggerClientEvent('qr-core:client:HideText', src)
+                TriggerClientEvent('rsg-core:client:HideText', src)
                 return
             end
         else
             if Player.Functions.RemoveMoney("cash", data.Dollar, "stable-bought-horse") then
-                TriggerClientEvent('qr-core:client:DrawText', src, 'horse purchased for $'..data.Dollar, 'left')
+                TriggerClientEvent('rsg-core:client:DrawText', src, 'horse purchased for $'..data.Dollar, 'left')
                 Wait(5000) -- display text for 5 seconds
-                TriggerClientEvent('qr-core:client:HideText', src)
+                TriggerClientEvent('rsg-core:client:HideText', src)
                 TriggerEvent('qbr-log:server:CreateLog', 'shops', 'Stable', 'green', "**"..GetPlayerName(Player.PlayerData.source) .. " (citizenid: "..Player.PlayerData.citizenid.." | id: "..Player.PlayerData.source..")** bought a horse for $"..data.Dollar..".")
             else
-                TriggerClientEvent('qr-core:client:DrawText', src, 'not enough money!', 'left')
+                TriggerClientEvent('rsg-core:client:DrawText', src, 'not enough money!', 'left')
                 Wait(5000) -- display text for 5 seconds
-                TriggerClientEvent('qr-core:client:HideText', src)
+                TriggerClientEvent('rsg-core:client:HideText', src)
                 return
             end
         end
@@ -114,7 +114,7 @@ end)
 
 RegisterNetEvent("rsg-stable:SelectHorseWithId", function(id)
     local src = source
-    local Player = QRCore.Functions.GetPlayer(src)
+    local Player = RSGCore.Functions.GetPlayer(src)
     local Playercid = Player.PlayerData.citizenid
     MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horse)
         for i = 1, #horse do
@@ -136,7 +136,7 @@ end)
 RegisterNetEvent("rsg-stable:SellHorseWithId", function(id)
     local modelHorse = nil
     local src = source
-    local Player = QRCore.Functions.GetPlayer(src)
+    local Player = RSGCore.Functions.GetPlayer(src)
     local Playercid = Player.PlayerData.citizenid
     MySQL.Async.fetchAll('SELECT * FROM player_horses WHERE `citizenid`=@citizenid;', {citizenid = Playercid}, function(horses)
 
@@ -163,47 +163,47 @@ RegisterNetEvent("rsg-stable:SellHorseWithId", function(id)
 end)
 
 -- call active horse command
-QRCore.Commands.Add("callhorse", "call your active horse", {}, false, function(source)
+RSGCore.Commands.Add("callhorse", "call your active horse", {}, false, function(source)
     src = source
     TriggerClientEvent('rsg-stable:client:callHorse', src)
 end)
 
 -- flee active horse command
-QRCore.Commands.Add("fleehorse", "flee your active horse", {}, false, function(source)
+RSGCore.Commands.Add("fleehorse", "flee your active horse", {}, false, function(source)
     src = source
     TriggerClientEvent('rsg-stable:client:fleeHorse', src)
 end)
 
 -- open active horse inventory command
-QRCore.Commands.Add("horseinv", "open your active horse inventory", {}, false, function(source)
+RSGCore.Commands.Add("horseinv", "open your active horse inventory", {}, false, function(source)
     src = source
     TriggerClientEvent('rsg-stable:client:inventoryHorse', src)
 end)
 
 -- feed horse carrot
-QRCore.Functions.CreateUseableItem("carrot", function(source, item)
-    local Player = QRCore.Functions.GetPlayer(source)
+RSGCore.Functions.CreateUseableItem("carrot", function(source, item)
+    local Player = RSGCore.Functions.GetPlayer(source)
     if Player.Functions.RemoveItem(item.name, 1, item.slot) then
         TriggerClientEvent("rsg-stable:client:feedhorse", source, item.name)
     end
 end)
 
 -- feed horse sugarcube
-QRCore.Functions.CreateUseableItem("sugarcube", function(source, item)
-    local Player = QRCore.Functions.GetPlayer(source)
+RSGCore.Functions.CreateUseableItem("sugarcube", function(source, item)
+    local Player = RSGCore.Functions.GetPlayer(source)
     if Player.Functions.RemoveItem(item.name, 1, item.slot) then
         TriggerClientEvent("rsg-stable:client:feedhorse", source, item.name)
     end
 end)
 
 -- brush horse
-QRCore.Functions.CreateUseableItem("horsebrush", function(source, item)
-    local Player = QRCore.Functions.GetPlayer(source)
+RSGCore.Functions.CreateUseableItem("horsebrush", function(source, item)
+    local Player = RSGCore.Functions.GetPlayer(source)
     TriggerClientEvent("rsg-stable:client:brushhorse", source, item.name)
 end)
 
 -- horselantern
-QRCore.Functions.CreateUseableItem("horselantern", function(source, item)
-    local Player = QRCore.Functions.GetPlayer(source)
+RSGCore.Functions.CreateUseableItem("horselantern", function(source, item)
+    local Player = RSGCore.Functions.GetPlayer(source)
     TriggerClientEvent("rsg-stable:client:equipHorseLantern", source, item.name)
 end)
